@@ -1,0 +1,17 @@
+{
+  "name": "reclame-aqui-bot",
+  "version": "1.0.0",
+  "description": "Bot de IA para Reclame Aqui",
+  "main": "reclame-aqui-bot.js",
+  "scripts": {
+    "start": "node reclame-aqui-bot.js"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.18.0",
+    "@anthropic-ai/sdk": "^0.24.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
