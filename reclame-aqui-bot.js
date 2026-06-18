@@ -1,14 +1,10 @@
-const { App, ExpressReceiver } = require('@slack/bolt');
+const { App } = require('@slack/bolt');
 const Anthropic = require('@anthropic-ai/sdk');
 require('dotenv').config();
 
-const receiver = new ExpressReceiver({
-  signingSecret: process.env.SLACK_SIGNING_SECRET
-});
-
 const slackApp = new App({
   token: process.env.SLACK_BOT_TOKEN,
-  receiver: receiver
+  signingSecret: process.env.SLACK_SIGNING_SECRET
 });
 
 const anthropic = new Anthropic({
@@ -22,6 +18,12 @@ Seja conciso, claro e prático nas respostas.`;
 slackApp.event('app_mention', async ({ event, say, client }) => {
   try {
     const pergunta = event.text.replace(/<@.*?>/, '').trim();
+    
+    if (!pergunta) {
+      await say('Por favor, faça uma pergunta sobre os processos do Reclame Aqui.');
+      return;
+    }
+
     const response = await say(':hourglass: Processando sua pergunta...');
     const messageTs = response.ts;
 
@@ -43,10 +45,6 @@ slackApp.event('app_mention', async ({ event, say, client }) => {
     console.error('Erro:', error);
     await say('❌ Erro ao processar sua pergunta. Tente novamente.');
   }
-});
-
-receiver.app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
 });
 
 (async () => {
