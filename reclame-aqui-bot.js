@@ -4,7 +4,8 @@ require('dotenv').config();
 
 const slackApp = new App({
   token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  socketMode: false
 });
 
 const anthropic = new Anthropic({
@@ -45,6 +46,10 @@ slackApp.event('app_mention', async ({ event, say, client }) => {
     console.error('Erro:', error);
     await say('❌ Erro ao processar sua pergunta. Tente novamente.');
   }
+});
+
+slackApp.error((error) => {
+  console.error('Error:', error);
 });
 
 (async () => {
