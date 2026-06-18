@@ -1,5 +1,5 @@
 const { App } = require('@slack/bolt');
-const Anthropic = require('@anthropic-ai/sdk');
+const OpenAI = require('openai');
 require('dotenv').config();
 
 const slackApp = new App({
@@ -8,8 +8,8 @@ const slackApp = new App({
   socketMode: false
 });
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 const SYSTEM_PROMPT = `Você é um agente especialista nos processos internos do Reclame Aqui.
@@ -28,14 +28,14 @@ slackApp.event('app_mention', async ({ event, say, client }) => {
     const response = await say(':hourglass: Processando sua pergunta...');
     const messageTs = response.ts;
 
-    const message = await anthropic.messages.create({
-      model: 'claude-opus-4-6',
+    const message = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
       max_tokens: 1500,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: pergunta }]
     });
 
-    const resposta = message.content[0].text;
+    const resposta = message.choices[0].message.content;
 
     await client.chat.update({
       channel: event.channel,
